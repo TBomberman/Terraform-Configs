@@ -20,7 +20,7 @@ data "aws_ami" "selected" {
 resource "aws_instance" "instance" {
   ami             = "${data.aws_ami.selected.id}"
   instance_type   = "t2.micro"
-  security_groups = ["default", "SSHGroupName"]
+  security_groups = ["default", "SSH", "Web Server"]
   key_name        = "${aws_key_pair.generated_key.key_name}"
   tags = {
     Name = "DEV ${var.build}"
@@ -28,7 +28,8 @@ resource "aws_instance" "instance" {
 
   provisioner "remote-exec" {
     inline = [
-      "pwd",
+      "cd NodeHelloWorld",
+      "npm start"
       "sleep 20"
     ]
 
@@ -47,6 +48,6 @@ resource "tls_private_key" "key" {
 }
 
 resource "aws_key_pair" "generated_key" {
-  key_name   = "terraform1"
+  key_name   = "terraform dev"
   public_key = "${tls_private_key.key.public_key_openssh}"
 }
