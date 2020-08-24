@@ -3,6 +3,10 @@ variable "build" {
   description = "This should match the build tag on the ami image."
 }
 
+locals {
+  environment = "Dev"
+}
+
 provider "aws" {
   profile = "default"
   region  = "us-west-2"
@@ -23,7 +27,7 @@ resource "aws_instance" "instance" {
   security_groups = ["default", "SSH", "Web Server"]
   key_name        = "${aws_key_pair.generated_key.key_name}"
   tags = {
-    Name = "DEV ${var.build}"
+    Name = "${local.environment} ${var.build}"
   }
 
   provisioner "remote-exec" {
@@ -48,7 +52,7 @@ resource "tls_private_key" "key" {
 }
 
 resource "aws_key_pair" "generated_key" {
-  key_name   = "terraform dev"
+  key_name   = "terraform ${local.environment}"
   public_key = "${tls_private_key.key.public_key_openssh}"
 }
 
@@ -59,6 +63,6 @@ resource "aws_eip_association" "eip_assoc" {
 
 data "aws_eip" "by_tags" {
   tags = {
-    Name = "Dev"
+    Name = "${local.environment}"
   }
 }
