@@ -33,6 +33,7 @@ resource "aws_instance" "instance" {
     ]
 
     connection {
+      host        = "${self.public_ip}"
       type        = "ssh"
       private_key = "${tls_private_key.key.private_key_pem}"
       user        = "ec2-user"
