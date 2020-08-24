@@ -23,7 +23,7 @@ resource "aws_instance" "instance" {
   security_groups = ["default", "SSHGroupName"]
   key_name        = "${aws_key_pair.generated_key.key_name}"
   tags = {
-    Name = "DEV ${var.branch}"
+    Name = "DEV ${var.build}"
   }
 
   provisioner "remote-exec" {
