@@ -25,6 +25,10 @@ resource "aws_instance" "instance" {
   tags = {
     Name = "DEV ${var.branch}"
   }
+
+  provisioner "local-exec" {
+    command = "pwd"
+  }
 }
 
 resource "aws_network_interface_sg_attachment" "sg_attachment" {
