@@ -1,6 +1,6 @@
-variable "branch" {
+variable "build" {
 #  default = "master"
-  description = "This should match the branch tag on the ami image."
+  description = "This should match the build tag on the ami image."
 }
 
 provider "aws" {
@@ -10,28 +10,42 @@ provider "aws" {
 
 data "aws_ami" "selected" {
   owners   = ["self"]
+  most_recent = true
   filter {
     name   = "tag:Build"
-    values = ["${var.branch}"]
+    values = ["${var.build}"]
   }
-
-  most_recent = true
 }
 
 resource "aws_instance" "instance" {
-  ami = "${data.aws_ami.selected.id}"
-  instance_type = "t2.micro"
-
+  ami             = "${data.aws_ami.selected.id}"
+  instance_type   = "t2.micro"
+  security_groups = ["default", "SSHGroupName"]
+  key_name        = "${aws_key_pair.generated_key.key_name}"
   tags = {
     Name = "DEV ${var.branch}"
   }
 
-  provisioner "local-exec" {
-    command = "pwd"
+  provisioner "remote-exec" {
+    inline = [
+      "pwd",
+      "sleep 20"
+    ]
+
+    connection {
+      type        = "ssh"
+      private_key = "${tls_private_key.key.private_key_pem}"
+      user        = "ec2-user"
+    }
   }
 }
 
-resource "aws_network_interface_sg_attachment" "sg_attachment" {
-  security_group_id    = "sg-079a7d9f8594516a7"
-  network_interface_id = aws_instance.instance.primary_network_interface_id
+resource "tls_private_key" "key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "generated_key" {
+  key_name   = "terraform"
+  public_key = "${tls_private_key.key.public_key_openssh}"
 }
