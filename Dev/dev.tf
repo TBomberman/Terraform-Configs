@@ -58,7 +58,7 @@ resource "aws_key_pair" "generated_key" {
 
 resource "aws_eip_association" "eip_assoc" {
   instance_id   = aws_instance.instance.id
-  allocation_id = "${data.aws_eip.selected.id}"
+  allocation_id = "${data.aws_eip.by_tags.id}"
 }
 
 data "aws_eip" "by_tags" {
