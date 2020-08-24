@@ -22,7 +22,6 @@ resource "aws_instance" "instance" {
   instance_type   = "t2.micro"
   security_groups = ["default", "SSH", "Web Server"]
   key_name        = "${aws_key_pair.generated_key.key_name}"
-  allocation_method  = "Static"
   tags = {
     Name = "DEV"
   }
