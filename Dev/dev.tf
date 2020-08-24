@@ -29,7 +29,7 @@ resource "aws_instance" "instance" {
   provisioner "remote-exec" {
     inline = [
       "cd NodeHelloWorld",
-      "npm start"
+      "npm start",
       "sleep 20"
     ]
 
