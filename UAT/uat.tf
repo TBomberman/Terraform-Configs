@@ -24,7 +24,7 @@ resource "aws_instance" "instance" {
   key_name        = "${aws_key_pair.generated_key.key_name}"
   allocation_method  = "Static"
   tags = {
-    Name = "UAT ${var.build}"
+    Name = "UAT"
   }
 
   provisioner "remote-exec" {
