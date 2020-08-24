@@ -23,7 +23,7 @@ resource "aws_instance" "instance" {
   security_groups = ["default", "SSH", "Web Server"]
   key_name        = "${aws_key_pair.generated_key.key_name}"
   tags = {
-    Name = "DEV"
+    Name = "DEV ${var.build}"
   }
 
   provisioner "remote-exec" {
@@ -50,4 +50,9 @@ resource "tls_private_key" "key" {
 resource "aws_key_pair" "generated_key" {
   key_name   = "terraform dev"
   public_key = "${tls_private_key.key.public_key_openssh}"
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.instance.id
+  allocation_id = "eipalloc-06539291c37d27758"
 }
