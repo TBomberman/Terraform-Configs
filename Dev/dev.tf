@@ -47,6 +47,6 @@ resource "tls_private_key" "key" {
 }
 
 resource "aws_key_pair" "generated_key" {
-  key_name   = "${var.key_name}"
+  key_name   = "terraform1"
   public_key = "${tls_private_key.key.public_key_openssh}"
 }
